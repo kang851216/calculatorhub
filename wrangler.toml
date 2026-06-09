@@ -1,9 +1,1 @@
-name = "calculator-hub"
-compatibility_date = "2024-12-01"
-pages_build_output_dir = ".vercel/output/static"
-
-[env.production]
-vars = { CURRENCY_API_URL = "https://open.er-api.com/v6/latest/USD" }
-
-[env.preview]
-vars = { CURRENCY_API_URL = "https://open.er-api.com/v6/latest/USD" }
+pages_build_output_dir = "out"
