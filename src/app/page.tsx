@@ -1,65 +1,110 @@
-import Image from "next/image";
+'use client';
+
+import Link from 'next/link';
+import Card from '@/components/ui/Card';
+import { CalculatorType } from '@/lib/types';
+import { useTranslation } from '@/contexts/LanguageContext';
+import {
+  Calculator,
+  Sigma,
+  ArrowLeftRight,
+  DollarSign,
+  Heart,
+  Calendar,
+} from 'lucide-react';
+
+const iconMap: Record<string, typeof Calculator> = {
+  Calculator,
+  Sigma,
+  ArrowLeftRight,
+  DollarSign,
+  Heart,
+  Calendar,
+};
+
+const types: CalculatorType[] = [
+  'basic',
+  'scientific',
+  'unit-converter',
+  'currency',
+  'bmi',
+  'date',
+];
+
+const featureKeys = [
+  { labelKey: 'home.feature100Label', descKey: 'home.feature100Desc' },
+  { labelKey: 'home.featureMobileLabel', descKey: 'home.featureMobileDesc' },
+  { labelKey: 'home.featureDarkLabel', descKey: 'home.featureDarkDesc' },
+  { labelKey: 'home.featureKeyboardLabel', descKey: 'home.featureKeyboardDesc' },
+];
+
+const iconKeys: Record<CalculatorType, string> = {
+  'basic': 'Calculator',
+  'scientific': 'Sigma',
+  'unit-converter': 'ArrowLeftRight',
+  'currency': 'DollarSign',
+  'bmi': 'Heart',
+  'date': 'Calendar',
+};
 
 export default function Home() {
+  const { t } = useTranslation();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div>
+      {/* Hero */}
+      <div className="text-center mb-10">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[var(--text-primary)] mb-3">
+          {t('home.title')}
+        </h1>
+        <p className="text-base sm:text-lg text-[var(--text-secondary)] max-w-xl mx-auto">
+          {t('home.subtitle')}
+        </p>
+      </div>
+
+      {/* Calculator Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+        {types.map(type => {
+          const Icon = iconMap[iconKeys[type]] || Calculator;
+
+          return (
+            <Link key={type} href={`/${type}`}>
+              <Card hoverable className="p-5 sm:p-6 h-full">
+                <div className="flex items-start gap-4">
+                  <div className="p-3 rounded-xl bg-[var(--accent)]/10 shrink-0">
+                    <Icon className="w-6 h-6 text-[var(--accent)]" />
+                  </div>
+                  <div className="min-w-0">
+                    <h2 className="text-lg font-bold text-[var(--text-primary)] mb-1">
+                      {t(`calcInfo.${type}.title`)}
+                    </h2>
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+                      {t(`calcInfo.${type}.desc`)}
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+          );
+        })}
+      </div>
+
+      {/* Features */}
+      <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {featureKeys.map(feature => (
+          <div
+            key={feature.labelKey}
+            className="text-center p-3 rounded-xl bg-[var(--bg-secondary)]"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+            <div className="text-sm font-semibold text-[var(--text-primary)]">
+              {t(feature.labelKey)}
+            </div>
+            <div className="text-xs text-[var(--text-secondary)] mt-0.5">
+              {t(feature.descKey)}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
