@@ -45,6 +45,21 @@ export default function RootLayout({
           `,
         }} />
 
+        {/* 🌐 Set <html lang> from URL for static export */}
+        <script dangerouslySetInnerHTML={{
+          __html: `
+            (function() {
+              try {
+                var match = window.location.pathname.match(/^\\/(en|zh-TW|zh-CN|ko)(\\/|$)/);
+                if (match) {
+                  var langMap = { 'en': 'en', 'zh-TW': 'zh-Hant', 'zh-CN': 'zh-Hans', 'ko': 'ko' };
+                  document.documentElement.lang = langMap[match[1]] || 'en';
+                }
+              } catch(e) {}
+            })();
+          `,
+        }} />
+
         {/* PWA */}
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#3b82f6" />

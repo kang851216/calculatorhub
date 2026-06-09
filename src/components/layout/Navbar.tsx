@@ -8,15 +8,17 @@ import ThemeToggle from '@/components/ui/ThemeToggle';
 import LanguageSelector from '@/components/ui/LanguageSelector';
 import { useTranslation } from '@/contexts/LanguageContext';
 
-const navLinkKeys = [
-  { href: '/', key: 'nav.home', icon: Calculator },
-  { href: '/basic', key: 'nav.basic' },
-  { href: '/scientific', key: 'nav.scientific' },
-  { href: '/unit-converter', key: 'nav.units' },
-  { href: '/currency', key: 'nav.currency' },
-  { href: '/bmi', key: 'nav.bmi' },
-  { href: '/date', key: 'nav.date' },
-];
+function buildNavLinks(locale: string) {
+  return [
+    { href: `/${locale}/`, key: 'nav.home', icon: Calculator },
+    { href: `/${locale}/basic`, key: 'nav.basic' },
+    { href: `/${locale}/scientific`, key: 'nav.scientific' },
+    { href: `/${locale}/unit-converter`, key: 'nav.units' },
+    { href: `/${locale}/currency`, key: 'nav.currency' },
+    { href: `/${locale}/bmi`, key: 'nav.bmi' },
+    { href: `/${locale}/date`, key: 'nav.date' },
+  ];
+}
 
 interface NavbarProps {
   onToggleHistory: () => void;
@@ -25,7 +27,9 @@ interface NavbarProps {
 export default function Navbar({ onToggleHistory }: NavbarProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { t } = useTranslation();
+  const { locale, t } = useTranslation();
+
+  const navLinkKeys = buildNavLinks(locale);
 
   return (
     <>
@@ -33,7 +37,7 @@ export default function Navbar({ onToggleHistory }: NavbarProps) {
       <nav className="hidden md:flex items-center justify-between px-6 py-3 border-b border-[var(--button-bg)] bg-[var(--bg-primary)]">
         <div className="flex items-center gap-8">
           <Link
-            href="/"
+            href={`/${locale}/`}
             className="flex items-center gap-2 font-bold text-lg text-[var(--text-primary)] hover:opacity-80 transition-opacity"
           >
             <Calculator className="w-6 h-6 text-[var(--accent)]" />
@@ -81,7 +85,7 @@ export default function Navbar({ onToggleHistory }: NavbarProps) {
           <Menu className="w-5 h-5 text-[var(--text-primary)]" />
         </button>
 
-        <Link href="/" className="flex items-center gap-2 font-bold text-lg text-[var(--text-primary)]">
+        <Link href={`/${locale}/`} className="flex items-center gap-2 font-bold text-lg text-[var(--text-primary)]">
           <Calculator className="w-5 h-5 text-[var(--accent)]" />
           <span>{t('nav.appName')}</span>
         </Link>

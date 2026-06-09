@@ -12,26 +12,30 @@ import {
 } from 'lucide-react';
 import { useTranslation } from '@/contexts/LanguageContext';
 
-const tabs: { href: string; key: string; icon: typeof Calculator }[] = [
-  { href: '/basic', key: 'mobileNav.basic', icon: Calculator },
-  { href: '/scientific', key: 'mobileNav.sci', icon: Sigma },
-  { href: '/unit-converter', key: 'mobileNav.units', icon: ArrowLeftRight },
-  { href: '/currency', key: 'mobileNav.money', icon: DollarSign },
-  { href: '/bmi', key: 'mobileNav.bmi', icon: Heart },
-  { href: '/date', key: 'mobileNav.date', icon: Calendar },
-];
+function buildTabs(locale: string) {
+  return [
+    { href: `/${locale}/basic`, key: 'mobileNav.basic', icon: Calculator },
+    { href: `/${locale}/scientific`, key: 'mobileNav.sci', icon: Sigma },
+    { href: `/${locale}/unit-converter`, key: 'mobileNav.units', icon: ArrowLeftRight },
+    { href: `/${locale}/currency`, key: 'mobileNav.money', icon: DollarSign },
+    { href: `/${locale}/bmi`, key: 'mobileNav.bmi', icon: Heart },
+    { href: `/${locale}/date`, key: 'mobileNav.date', icon: Calendar },
+  ];
+}
 
 export default function MobileNav() {
   const pathname = usePathname();
-  const { t } = useTranslation();
+  const { locale, t } = useTranslation();
+
+  const tabs = buildTabs(locale);
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[var(--bg-primary)] border-t border-[var(--button-bg)] safe-area-bottom">
       <div className="flex items-center justify-around px-1 py-1">
         <Link
-          href="/"
+          href={`/${locale}/`}
           className={`flex flex-col items-center justify-center px-2 py-1.5 rounded-lg transition-colors min-w-0 ${
-            pathname === '/'
+            pathname === `/${locale}/`
               ? 'text-[var(--accent)]'
               : 'text-[var(--text-secondary)]'
           }`}

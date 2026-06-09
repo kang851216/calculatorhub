@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { Language } from '@/lib/types';
 import { translations } from '@/lib/i18n/translations';
+import { LOCALES, isValidLocale } from '@/lib/i18n/locales';
 
 interface LanguageContextType {
   locale: Language;
@@ -16,8 +17,15 @@ const STORAGE_KEY = 'app-language';
 
 function getInitialLocale(): Language {
   if (typeof window !== 'undefined') {
+    // 1. Try URL path first (e.g., /ko/basic → 'ko')
+    const match = window.location.pathname.match(/^\/(en|zh-TW|zh-CN|ko)(\/|$)/);
+    if (match && isValidLocale(match[1])) {
+      return match[1] as Language;
+    }
+
+    // 2. Fallback to stored preference
     const stored = localStorage.getItem(STORAGE_KEY) as Language | null;
-    if (stored && ['en', 'zh-TW', 'zh-CN', 'ko'].includes(stored)) {
+    if (stored && isValidLocale(stored)) {
       return stored;
     }
   }
@@ -46,6 +54,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, newLocale);
       document.documentElement.setAttribute('lang', newLocale);
+
+      // Navigate to locale-prefixed URL, preserving the calculator type path
+      const currentPath = window.location.pathname;
+      const pathWithoutLocale = currentPath.replace(/^\/(en|zh-TW|zh-CN|ko)/, '') || '/';
+      window.location.href = `/${newLocale}${pathWithoutLocale}`;
     }
   }, []);
 

@@ -1,10 +1,46 @@
 import { Metadata } from 'next';
 import { CalculatorType } from './types';
 import { CALCULATOR_INFO } from './constants';
+import { translations } from './i18n/translations';
+import { LOCALES, SITE_URL, LOCALE_CONFIG } from './i18n/locales';
 
 const SITE_NAME = 'CalculatorHub';
-const SITE_URL = 'https://calculator-hub.pages.dev';
 const DEFAULT_OG_IMAGE = '/og-image.png';
+
+type TranslationTable = Record<string, string>;
+
+function getTranslation(locale: string, key: string): string {
+  const lang = translations[locale as keyof typeof translations] as TranslationTable;
+  const fallback = translations.en as TranslationTable;
+  return lang?.[key] ?? fallback?.[key] ?? key;
+}
+
+/** Maps kebab-case CalculatorType to camelCase translation key segment */
+function typeToTranslationKey(type: CalculatorType): string {
+  const map: Record<CalculatorType, string> = {
+    'basic': 'basic',
+    'scientific': 'scientific',
+    'unit-converter': 'unitConverter',
+    'currency': 'currency',
+    'bmi': 'bmi',
+    'date': 'date',
+  };
+  return map[type];
+}
+
+/** Build hreflang alternates for a given path suffix (e.g. '' or '/basic') */
+function buildAlternates(locale: string, pathSuffix: string): { canonical: string; languages: Record<string, string> } {
+  const languages: Record<string, string> = {};
+  for (const loc of LOCALES) {
+    languages[LOCALE_CONFIG[loc].hrefLang] = `${SITE_URL}/${loc}${pathSuffix}`;
+  }
+  languages['x-default'] = `${SITE_URL}/en${pathSuffix}`;
+
+  return {
+    canonical: `${SITE_URL}/${locale}${pathSuffix}`,
+    languages,
+  };
+}
 
 export function getCalculatorMetadata(type: CalculatorType): Metadata {
   const info = CALCULATOR_INFO[type];
@@ -54,3 +90,59 @@ export const homeMetadata: Metadata = {
     canonical: SITE_URL,
   },
 };
+
+/** Generate localized Metadata for a calculator page under /[locale]/[type] */
+export function getLocalizedCalculatorMetadata(
+  type: CalculatorType,
+  locale: string
+): Metadata {
+  const key = typeToTranslationKey(type);
+  const title = `${getTranslation(locale, `page.${key}.title`)} - ${SITE_NAME}`;
+  const description = getTranslation(locale, `page.${key}.desc`);
+  const alternates = buildAlternates(locale, `/${type}`);
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/${locale}/${type}`,
+      siteName: SITE_NAME,
+      type: 'website',
+      images: [{ url: DEFAULT_OG_IMAGE, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
+    alternates,
+  };
+}
+
+/** Generate localized Metadata for the home page under /[locale]/ */
+export function getLocalizedHomeMetadata(locale: string): Metadata {
+  const title = `${getTranslation(locale, 'home.title')} - ${SITE_NAME}`;
+  const description = getTranslation(locale, 'home.subtitle');
+  const alternates = buildAlternates(locale, '');
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/${locale}`,
+      siteName: SITE_NAME,
+      type: 'website',
+      images: [{ url: DEFAULT_OG_IMAGE, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
+    alternates,
+  };
+}
