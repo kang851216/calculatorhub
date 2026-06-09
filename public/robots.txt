@@ -1,0 +1,8 @@
+# robots.txt for CalculatorHub - https://calculator-hub.pages.dev
+# All crawlers are allowed to access all content
+
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://calculator-hub.pages.dev/sitemap.xml
