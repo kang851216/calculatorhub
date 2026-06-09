@@ -109,7 +109,8 @@ export default function ScientificCalculator() {
   const calculateResult = useCallback(() => {
     setError(null);
     try {
-      let sanitized = expression
+      const fullExpr = (expression + display).trim();
+      let sanitized = fullExpr
         .replace(/×/g, '*')
         .replace(/÷/g, '/')
         .replace(/\^/g, '**')
@@ -127,7 +128,7 @@ export default function ScientificCalculator() {
       
       addEntry({
         type: 'scientific' as CalculatorType,
-        expression: expression || display,
+        expression: fullExpr || display,
         result: formatted,
       });
 
